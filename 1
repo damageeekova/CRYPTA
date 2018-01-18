@@ -1,0 +1,59 @@
+#include <iostream>
+using namespace std;
+
+int modInverse(int a, int m){
+    a = a%m;
+    for (int x=1; x<m; x++){
+       if ((a*x) % m == 1)
+          return x;
+    }
+}
+
+int step(int a, int k){
+int p=a;
+for (int i=1; i < k; i++) a=a*p;
+return a;
+ }
+
+/*void modInverse(int a, int m)
+{
+    int x, y;
+    int g = 1;
+        int res = (x%m + m) % m;
+        cout << "Modular multiplicative inverse is " << res;
+}*/
+
+
+int main(){
+int size;
+cout << "Enter size of array ";
+cin >> size;
+int arr [size];
+for (int i = 0; i < size; i++) cin >> arr [i];
+cout << "Enter p,q "; //простые числа
+int p,q;
+cin >> p >> q;
+int n = p*q; //n сложно подобрать
+int func = (p-1) * (q-1);  //функция Эйлера (подсчет взаимно простых чисел с n)
+cout << "Enter public exponent " << '1' << " < e < " << func;
+int e;
+cin >> e; //е-открытая экспонента- простое (например из  чисел ферма)
+
+int d= modInverse (e, func); //поиск закрытой экспоненты
+
+cout << "Public key {" << e << "," << n << "}" << endl;
+cout << "Private key {" << d << "," << n << "}" << endl << endl;
+
+int c [size];
+for (int i = 0; i < size; i++) {  //шифровка
+        c[i]= (step (arr[i], e))% n;
+}
+
+
+int k[size];
+for (int i = 0; i < size; i++) {  //дешифровка
+        k[i]= (step (c[i], d))% n;
+}
+
+return 0;
+}
