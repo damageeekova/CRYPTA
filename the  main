@@ -1,0 +1,91 @@
+#include <iostream>
+using namespace std;
+
+
+int extended_euclid(int b, int a){
+    int y;
+    if ((a+1)%b==0) y=(a+1)/b;
+    else {
+    int d,x;
+    int q, r, x1, x2, y1, y2;
+
+
+  x2 = 1;
+  x1 = 0;
+  y2 = 0;
+  y1 = 1;
+
+  while (b != 0){
+    q = a / b;
+    r = a - q * b;
+
+    x = x2 - q * x1;
+    y = y2 - q * y1;
+
+    a = b;
+    b = r;
+    x2 = x1;
+    x1 = x;
+    y2 = y1;
+    y1 = y;
+     }
+   y = y2 + y1;
+    }
+ return y;
+}
+
+
+
+
+ int step (long long int a, int k,int n) {
+     int temp=a;
+     for (int i = 1; i < k; i++){
+       a=((a%n)*(temp%n))%n ;
+     }
+     return a;
+    /*if(k == 0) return 1;
+    if(k < 0) return step ( 1/a, - k);
+    if(k%2 == 1) return a * step (a, k - 1);
+    else return step (a*a, k/2);*/
+ }
+
+int main(){
+int size;
+cout << "Enter size of array ";
+cin >> size;
+int arr [size];
+for (int i = 0; i < size; i++) cin >> arr [i];
+cout << "Enter p,q "; //простые числа
+int p,q;
+cin >> p >> q;
+long int n = p*q; //n сложно подобрать
+long int func = (p-1) * (q-1);  //функция Эйлера (подсчет взаимно простых чисел с n)
+cout << "Enter public exponent " << '1' << " < e < " << func;
+int e;
+cin >> e; //е-открытая экспонента- простое (например из  чисел ферма)
+long int x,y,d;
+x=extended_euclid (e, func); //поиск закрытой экспоненты
+
+cout << "Public key {" << e << "," << n << "}" << endl;
+cout << "Private key {" << x << "," << n << "}" << endl << endl;
+
+long int c [size];
+for (int i = 0; i < size; i++) {  //шифровка
+        c[i]= step (arr[i], e, n);
+        cout << " Schifr = " <<  c[i];
+}
+
+cout << endl;
+
+long int k[size];
+for (int i = 0; i < size; i++) {  //дешифровка
+    if (c[i]==0) {
+        cout << " Deschifr = " << n;
+    }
+       else {
+            k[i]= step (c[i], x, n);
+        cout <<" Deschifr = " << k[i];
+       }
+}
+return 0;
+}
