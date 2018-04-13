@@ -1,0 +1,116 @@
+    #include <iostream>
+    using namespace std;
+
+
+
+    int phi (int n) {
+        int result = n;
+        for (int i=2; i*i<=n; ++i)
+            if (n % i == 0) {
+                while (n % i == 0)
+                    n /= i;
+                result -= result / i;
+            }
+        if (n > 1)
+            result -= result / n;
+        return result;
+    }
+
+/*int step (int a, int n) {
+	int res = 1;
+	while (n) {
+		if (n & 1)
+			res *= a;
+		a *= a;
+		n >>= 1;
+	}
+	return res;
+}*/
+
+     int step (int a, int k,int n) {
+         int temp = a;
+         if (n != 1)
+            for (int i = 1; i < k; i++){
+                a = (a*(temp % n))%n ;
+            }
+         else
+            for (int i = 1; i < k; i++){
+                a = a * temp ;
+            }
+         return a;
+     }
+
+         int extended_euclid(int b, int a){
+        int y;
+        int e = b;
+        int n = a;
+        if ((a + 1) % b == 0)
+            y = (a + 1) / b;
+        else {
+            int x;
+            int q, r, x1, x2, y1, y2;
+            x2 = 1;
+            x1 = 0;
+            y2 = 0;
+            y1 = 1;
+            while (b != 0){
+                q = a / b;
+                r = a - q * b;
+                x = x2 - q * x1;
+                y = y2 - q * y1;
+                a = b;
+                b = r;
+                x2 = x1;
+                x1 = x;
+                y2 = y1;
+                y1 = y;
+            }
+            y = y2;
+        }
+        if (y < 0)
+            y = step(e, phi(n)-1,1);
+     return y;
+    }
+
+    int main(){
+    int size;
+    cout << phi(4) << " "<< phi(5)<< " "<< phi(10)<< " " << phi(12)<< " ";
+    cout << "Enter size of array ";
+    cin >> size;
+
+    int arr [size];
+    for (int i = 0; i < size; i++)
+        cin >> arr [i];
+
+    int p,q;
+    cout << "Enter p,q "; //простые числа
+    cin >> p >> q;
+
+    long int n = p*q; //n сложно подобрать
+    long int func = (p-1) * (q-1);  //функция Эйлера (подсчет взаимно простых чисел с n), должна быть больше, чем само вводимое число
+
+    cout << "Enter public exponent " << '1' << " < e < " << func;
+    int e;
+    cin >> e; //е-открытая экспонента- простое + взаимно простое с ф.Эйлера (например из  чисел ферма)
+
+    long int x,y,d;
+    x = extended_euclid (e, func); //поиск закрытой экспоненты
+
+    cout << "Public key {" << e << "," << n << "}" << endl;
+    cout << "Private key {" << x << "," << n << "}" << endl << endl;
+
+    long int c [size];
+    for (int i = 0; i < size; i++) {  //шифровка
+            c[i]= step (arr[i], e,n);
+            cout << " Schifr = " <<  c[i];
+    }
+
+    cout << endl;
+
+    long int k[size];
+    for (int i = 0; i < size; i++) {  //дешифровка
+            k[i]= step (c[i], x, n);
+            cout <<" Deschifr = " << k[i];
+    }
+    return 0;
+    }
