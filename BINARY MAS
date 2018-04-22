@@ -1,0 +1,244 @@
+#include <stdlib.h>
+#include <iostream>
+#include<stdio.h>
+   using namespace std;
+
+        int phi (int n) {
+            int result = n;
+            for (int i=2; i*i<=n; i++)
+                if (n % i == 0) {
+                    while (n % i == 0)
+                        n /= i;
+                    result -= result / i;
+                }
+            if (n > 1)
+                result -= result / n;
+            return result;
+        }
+
+        long long int step (long long int a, int k,int n) {
+                 int temp = a % n;
+                    for (int i = 1; i < k; i++)
+                        a = (a * temp) % n ;
+                    return a;
+             }
+
+        long long int extended_euclid(int b, long long int a){
+        int y;
+        int e = b;
+        int n = a;
+        if ((a + 1) % b == 0)
+            y = (a + 1) / b;
+        else {
+            int x;
+            int q, r, x1, x2, y1, y2;
+            x2 = 1;
+            x1 = 0;
+            y2 = 0;
+            y1 = 1;
+            while (b != 0){
+                q = a / b;
+                r = a - q * b;
+                x = x2 - q * x1;
+                y = y2 - q * y1;
+                a = b;
+                b = r;
+                x2 = x1;
+                x1 = x;
+                y2 = y1;
+                y1 = y;
+            }
+            y = y2;
+        }
+        if (y < 0)
+            y = n + y;
+        return y;
+    }
+
+        int charToBinary(char* val, int* ff){
+        int binary = 0;
+        int j = 0;
+        int c;
+        for(int i=0 ; val[i]!='\0' ; i++ ){
+              c = val[i];
+              for(int power = 7 ; power + 1 ; power-- )
+                  if( c >= (1 << power) ){
+                      c -= (1 << power);
+                     ff[j] = 1;
+                     j++;
+                  }
+                  else{
+                    ff[j] = 0;
+                    j++;
+                  }
+       }
+       return j;
+    }
+
+        
+    int main(){
+    int size;
+    cout << "Enter size of array ";
+    cin >> size;
+    char ar[] = "qwertyqwertyqwertyqwertyqwertyqertywerty";
+    cout << ar;
+    int ff [5000];
+    int s = charToBinary(ar, ff); //S - количество символов в бинарном массиве
+    int a [s]; // а - бинарный массив
+    for (int i=0; i < s; i++)
+        a[i] = ff[i];
+    cout << endl;
+    for(int i = 0; i <s; i++)
+        cout << a[i];
+
+    cout << endl << s <<"  " <<  100*(s/144)<< endl << endl;
+    int j = 0;
+    int fin = rand()%(100*(s/144)); // количество групп элементов
+    cout << endl  << fin << endl;
+    int random [fin]; // массив содержащий кол-во элементов  в каждой группе
+    int kol = s;
+    for (int i = 0; i < fin - 1 ; i++){
+        random[i] = rand() % kol/6;
+        kol -= random [i];
+    }
+
+    random [fin - 1] = kol;
+
+    for (int i = 0; i < fin; i++)
+        cout << random[i] << " ";
+    int z = 0;
+    int mass [fin][s/3];
+    for (int i = 0; i < fin; i++){
+        for (int h = 0; h < random [i]; h++)
+            mass [i][h] = a [h+z];
+    z += random [i];
+    }
+     cout << endl << endl;
+    for (int i = 0; i < fin; i++){
+        for (int h = 0; h < random [i]; h++)
+            cout <<  mass [i][h];
+    cout << endl << endl;
+    }
+
+    int arr [size];
+    for (int i = 0; i < size; i++)
+        cin >> arr [i];
+
+    int p,q;
+    cout << "Enter p,q "; //простые числа
+    cin >> p >> q;
+
+    long int n = p*q; //n сложно подобрать
+    long int func = (p-1) * (q-1);  //функция Эйлера (подсчет взаимно простых чисел с n), должна быть больше, чем само вводимое число
+
+    cout << "Enter public exponent " << '1' << " < e < " << func;
+    int e;
+    cin >> e; //е-открытая экспонента- простое + взаимно простое с ф.Эйлера (например из  чисел ферма)
+
+    long int x,y,d;
+    x = extended_euclid(e,func);
+    cout << "Public key {" << e << "," << n << "}" << endl;
+    cout << "Private key {" << x << "," << n << "}" << endl << endl;
+
+    long int c [size];
+    for (int i = 0; i < size; i++) {  //шифровка
+            c[i]= step (arr[i], e,n);
+            cout << " Schifr = " <<  c[i];
+    }
+
+    cout << endl;
+
+    long int k[size];
+    for (int i = 0; i < size; i++) {  //дешифровка
+            k[i]= step (c[i], x, n);
+            cout <<" Deschifr = " << k[i];
+    }
+    return 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*int step (int a, int n) {
+	int res = 1;
+	while (n) {
+		if (n & 1)
+			res *= a;
+		a *= a;
+		n >>= 1;
+	}
+	return res;
+}
+
+        int step(int a ,int x, int p){
+            int i = 0;
+            cout << " a = " << a << endl;
+            cout << " x = " << x << endl;
+            cout << " p = " << p << endl;
+            int x10[1000];
+            while(x >= 1){
+                x10[i] = x % 2;
+                x /= 2;
+                i++;
+            }
+            int n = i;
+            int x2[n];
+            for (int j = 0; j < n; j++){
+                x2[j] = x10[j];
+                cout << x2[j];
+            }
+            cout << endl;
+            int *arr = new int[n]; // массив значений
+            arr[0] = a;
+            cout << arr[0] << " "; // 1 элемент
+            for(int i = 1; i < n; i++ ) {
+                arr[i] = (arr[i-1] * arr[i-1]) % p;
+                cout << arr[i] << " ";
+            }
+            int proizv = 1;
+            for(int j = 0, i = n - 1; j < n, i >=0 ; j++, i--) {
+                if (x2[i] == 1){
+                    proizv = (proizv * x2[i] * arr[j])%p ;
+                    cout << " proizv = " << proizv << endl;
+                }
+                else{
+                    proizv = (proizv * 1 * arr[j]) % p;
+                    cout << " proizv = " << proizv << endl;
+                }
+            }
+            int y = proizv % p;
+            delete [] x2;
+            delete [] arr;
+            return y;
+        }*/
